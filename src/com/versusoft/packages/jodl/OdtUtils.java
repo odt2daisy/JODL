@@ -594,11 +594,33 @@ public class OdtUtils {
 
             Node node = pNodes.item(i);
 
-            // remove empty para
-            if (node.getTextContent().trim().equals("") && !node.hasChildNodes()) {
-                node.getParentNode().removeChild(node);
-                i--;
+            // if no text
+            if (node.getTextContent().trim().equals("")){
 
+                // if no childs
+                if(!node.hasChildNodes()){
+
+                   // then remove
+                   node.getParentNode().removeChild(node);
+                   i--;
+
+                // if childs
+                } else {
+
+                    boolean empty = true;
+
+                    // don't remove if an element is present (like image...)
+                    for(int j=0; j<node.getChildNodes().getLength(); j++){
+                       if(node.getChildNodes().item(j).getNodeType() == node.ELEMENT_NODE){
+                            empty = false;
+                       }
+                    }
+
+                    if(empty){
+                        node.getParentNode().removeChild(node);
+                        i--;
+                    }
+                }
             }
 
         }
