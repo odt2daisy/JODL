@@ -597,14 +597,14 @@ public class OdtUtils {
             // if no text
             if (node.getTextContent().trim().equals("")){
 
-                // if no childs
+                // if no children
                 if(!node.hasChildNodes()){
 
                    // then remove
                    node.getParentNode().removeChild(node);
                    i--;
 
-                // if childs
+                // if children
                 } else {
 
                     boolean empty = true;
