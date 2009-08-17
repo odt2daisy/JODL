@@ -103,26 +103,29 @@ public class CommandLineGUI {
 
 
         utils.open(cmd.getOptionValue("in"));
-        utils.correctionStep();
+        //utils.correctionStep();
         utils.saveXML(outFile.getAbsolutePath());
 
-        if (cmd.hasOption("page")) {
-            try {
+        try {
 
+            if (cmd.hasOption("page")) {
                 OdtUtils.paginationProcessing(outFile.getAbsolutePath());
-
-            } catch (ParserConfigurationException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            } catch (SAXException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            } catch (TransformerConfigurationException ex) {
-                logger.log(Level.SEVERE, null, ex);
-            } catch (TransformerException ex) {
-                logger.log(Level.SEVERE, null, ex);
             }
+            
+            OdtUtils.correctionProcessing(outFile.getAbsolutePath());
+
+        } catch (ParserConfigurationException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (TransformerConfigurationException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
+
 
         if (cmd.hasOption("pic")) {
 

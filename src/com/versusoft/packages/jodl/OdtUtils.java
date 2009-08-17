@@ -167,13 +167,59 @@ public class OdtUtils {
 
     }
 
-    public void correctionStep() {
-        correctionProcessing(root);
-    }
-
     public boolean saveXML(String fileOut) {
 
         return saveDOM(doc, fileOut);
+
+    }
+
+    public static void correctionProcessing(String xmlFile)
+            throws ParserConfigurationException, SAXException, SAXException,
+            IOException, IOException, TransformerConfigurationException,
+            TransformerConfigurationException, TransformerConfigurationException,
+            TransformerConfigurationException, TransformerConfigurationException,
+            TransformerException {
+
+        DocumentBuilderFactory docFactory;
+        DocumentBuilder docBuilder;
+
+        Document contentDoc;
+
+        // Node pointer
+        Node currentNode = null;
+
+        docFactory =
+                DocumentBuilderFactory.newInstance();
+        docFactory.setValidating(false);
+
+        docBuilder =
+                docFactory.newDocumentBuilder();
+        docBuilder.setEntityResolver(new EntityResolver() {
+
+            public InputSource resolveEntity(
+                    java.lang.String publicId, java.lang.String systemId)
+                    throws SAXException, java.io.IOException {
+
+                return new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
+
+            }
+        });
+
+        contentDoc = docBuilder.parse(xmlFile);
+        Element root = contentDoc.getDocumentElement();
+
+        // Select first element after text:sequence-decls
+        currentNode =
+                XPathAPI.selectSingleNode(root, "/document/body/text/sequence-decls/following-sibling::*[1]");
+
+        if (currentNode == null) {
+            System.out.println("XPath select failed");
+        }
+
+        removeEmptyHeadings(root);
+        removeEmptyParagraphs(root);
+        
+        saveDOM(contentDoc, xmlFile);
 
     }
 
@@ -189,7 +235,7 @@ public class OdtUtils {
 
         Document contentDoc;
 
-// Node pointer
+        // Node pointer
         Node currentNode = null;
 
         docFactory =
@@ -221,7 +267,7 @@ public class OdtUtils {
         }
 
         insertPagination(root, currentNode, 0, false, "", "Standard", true, true);
-        correctionProcessing(root);
+        //correctionProcessing(root);
         saveDOM(contentDoc, xmlFile);
 
     }
@@ -478,8 +524,8 @@ public class OdtUtils {
 
     }
 
-    /* <pagenum value="1234" enum="IiAa1" /> */
-    private static void correctionProcessing(Node root) {
+
+    private static void removeEmptyHeadings(Node root){
 
         // for each text:h
         // remove empty headings
@@ -487,22 +533,22 @@ public class OdtUtils {
         for (int i = 0; i < hNodes.getLength(); i++) {
 
             Node node = hNodes.item(i);
-            
+
             if (node.getChildNodes().getLength() > 0) {
 
                 boolean empty = true;
-                
+
                 for (int j = 0; j < node.getChildNodes().getLength(); j++) {
                     if (!node.getChildNodes().item(j).getTextContent().trim().equals("")) {
                         empty = false;
                     }
                 }
-                
+
                 if (empty) {
                     node.getParentNode().removeChild(node);
                     i--;
                 }
-                
+
             } else {
                 if (node.getTextContent().trim().equals("")) {
                     node.getParentNode().removeChild(node);
@@ -512,6 +558,9 @@ public class OdtUtils {
             }
         }
 
+    }
+
+    private static void removeEmptyParagraphs(Node root){
 
         // for each text:p
         NodeList pNodes = ((Element) root).getElementsByTagName("text:p");
@@ -519,7 +568,7 @@ public class OdtUtils {
 
             Node node = pNodes.item(i);
 
-            // remove empty para 
+            // remove empty para
             if (node.getTextContent().trim().equals("") && !node.hasChildNodes()) {
                 node.getParentNode().removeChild(node);
                 i--;
