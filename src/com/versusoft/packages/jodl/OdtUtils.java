@@ -217,6 +217,7 @@ public class OdtUtils {
         }
 
         removeEmptyHeadings(root);
+        normalizeTextS(contentDoc,root);
         removeEmptyParagraphs(root);
         
         saveDOM(contentDoc, xmlFile);
@@ -558,6 +559,31 @@ public class OdtUtils {
             }
         }
 
+    }
+
+    private static void normalizeTextS(Document doc, Node root){
+
+        NodeList sNodes = ((Element) root).getElementsByTagName("text:s");
+
+        for (int i = 0; i < sNodes.getLength(); i++) {
+
+            Element elem = (Element) sNodes.item(i);
+
+            int c = 1;
+            String s = "";
+            
+            if(elem.hasAttribute("text:c")){
+                c = Integer.parseInt(elem.getAttribute("text:c"));
+            }
+            
+            for(int j=0; j<c; j++){
+                s += " ";
+            }
+
+            Node textNode = doc.createTextNode(s);
+            elem.getParentNode().replaceChild(textNode, elem);
+            i--;
+        }
     }
 
     private static void removeEmptyParagraphs(Node root){
