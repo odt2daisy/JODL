@@ -744,7 +744,7 @@ public class OdtUtils {
             if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;
+                append = true;               
             } else if (XPathAPI.eval(root, xpath3).bool()) {
 
                 xpath = "/document/automatic-styles/style[@name='" + styleName + "']/table-properties/@page-number";
@@ -860,14 +860,14 @@ public class OdtUtils {
                 pageNode.setAttribute("value", Numbering.toRoman(pagenum));
             } else if (enumType.equals("I")) {
                 pageNode.setAttribute("value", Numbering.toRoman(pagenum).toUpperCase());
-            }
-
-            if (enumType.equals("a")) {
+            } else if (enumType.equals("a")) {
                 pageNode.setAttribute("value", Numbering.toLetter(pagenum));
-
             } else if (enumType.equals("A")) {
                 pageNode.setAttribute("value", Numbering.toLetter(pagenum).toUpperCase());
+            } else {
+                pageNode.setAttribute("value", String.valueOf(pagenum));
             }
+
             node.getParentNode().insertBefore(pageNode, node);
 
         }
@@ -902,6 +902,7 @@ public class OdtUtils {
                 pageNode.setAttribute("num", Integer.toString(pagenum));
                 pageNode.setAttribute("enum", enumType);
                 pageNode.setAttribute("render", Boolean.toString(incPageNum));
+                pageNode.setAttribute("value", String.valueOf(pagenum));
 
                 node.getParentNode().insertBefore(p1, node);
                 node.getParentNode().insertBefore(pageNode, node);
@@ -920,6 +921,7 @@ public class OdtUtils {
                     pageNode.setAttribute("num", Integer.toString(pagenum));
                     pageNode.setAttribute("enum", enumType);
                     pageNode.setAttribute("render", Boolean.toString(incPageNum));
+                    pageNode.setAttribute("value", String.valueOf(pagenum));
 
                     Node n = pageBreaks.item(0).getParentNode();
                     while (!n.getNodeName().equals("text:list-item")) {
@@ -948,6 +950,7 @@ public class OdtUtils {
                     pageNode.setAttribute("num", Integer.toString(pagenum));
                     pageNode.setAttribute("enum", enumType);
                     pageNode.setAttribute("render", Boolean.toString(incPageNum));
+                    pageNode.setAttribute("value", String.valueOf(pagenum));
 
                     pageBreaks.item(i).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(i).getParentNode());
                 }
@@ -963,6 +966,7 @@ public class OdtUtils {
                     pageNode.setAttribute("num", Integer.toString(pagenum));
                     pageNode.setAttribute("enum", enumType);
                     pageNode.setAttribute("render", Boolean.toString(incPageNum));
+                    pageNode.setAttribute("value", String.valueOf(pagenum));
 
                     pageBreaks.item(i).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(i).getParentNode());
                 //node.replaceChild(pageNode, pageBreaks.item(0));
