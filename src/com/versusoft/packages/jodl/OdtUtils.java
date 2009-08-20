@@ -865,13 +865,13 @@ public class OdtUtils {
             pageNode.setAttribute("render", Boolean.toString(incPageNum));
 
             if (enumType.equals("i")) {
-                pageNode.setAttribute("value", Numbering.toRoman(pagenum));
+                pageNode.setAttribute("value", RomanNumbering.toRoman(pagenum));
             } else if (enumType.equals("I")) {
-                pageNode.setAttribute("value", Numbering.toRoman(pagenum).toUpperCase());
+                pageNode.setAttribute("value", RomanNumbering.toRoman(pagenum).toUpperCase());
             } else if (enumType.equals("a")) {
-                pageNode.setAttribute("value", Numbering.toLetter(pagenum));
+                pageNode.setAttribute("value", LetterNumbering.toLetter(pagenum));
             } else if (enumType.equals("A")) {
-                pageNode.setAttribute("value", Numbering.toLetter(pagenum).toUpperCase());
+                pageNode.setAttribute("value", LetterNumbering.toLetter(pagenum).toUpperCase());
             } else {
                 pageNode.setAttribute("value", String.valueOf(pagenum));
             }
