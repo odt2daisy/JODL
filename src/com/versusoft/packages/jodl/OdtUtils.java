@@ -666,16 +666,16 @@ public class OdtUtils {
             xpath3 =
                     "/document/automatic-styles/style[@name='" + styleName + "']/paragraph-properties[@page-number>0]";
 
-            if (XPathAPI.eval(root, xpath1).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath3).bool()) {
+            if (XPathAPI.eval(root, xpath3).bool()) {
 
                 xpath = "/document/automatic-styles/style[@name='" + styleName + "']/paragraph-properties/@page-number";
                 pagenum = Integer.parseInt(XPathAPI.eval(root, xpath).str());
                 pagenum--;
 
+                append = true;
+            } else if (XPathAPI.eval(root, xpath2).bool()) {
+                append = true;
+            } else if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             }
 
@@ -705,15 +705,15 @@ public class OdtUtils {
             // text:list page-number="value"
             xpath3 = "/document/automatic-styles/style[@list-style-name='" + styleName + "']/paragraph-properties[@page-number>0]";
 
-            if (XPathAPI.eval(root, xpath1).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath3).bool()) {
+            if (XPathAPI.eval(root, xpath3).bool()) {
                 xpath = "/document/automatic-styles/style[@list-style-name='" + styleName + "']/paragraph-properties/@page-number";
                 pagenum = Integer.parseInt(XPathAPI.eval(root, xpath).str());
                 pagenum--;
 
+                append = true;
+            } else if (XPathAPI.eval(root, xpath2).bool()) {
+                append = true;
+            } else if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             }
 
@@ -741,16 +741,16 @@ public class OdtUtils {
             // table:table page-number="value"
             xpath3 = "/document/automatic-styles/style[@name='" + styleName + "']/table-properties[@page-number>0]";
 
-            if (XPathAPI.eval(root, xpath1).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;               
-            } else if (XPathAPI.eval(root, xpath3).bool()) {
+            if (XPathAPI.eval(root, xpath3).bool()) {
 
                 xpath = "/document/automatic-styles/style[@name='" + styleName + "']/table-properties/@page-number";
                 pagenum = Integer.parseInt(XPathAPI.eval(root, xpath).str());
                 pagenum--;
 
+                append = true;
+            } else if (XPathAPI.eval(root, xpath2).bool()) {
+                append = true;               
+            } else if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             }
 
@@ -785,16 +785,16 @@ public class OdtUtils {
             // text:table-of-content page-number="value"
             xpath3 = "/document/automatic-styles/style[@name='" + styleName + "']/paragraph-properties[@page-number>0]";
 
-            if (XPathAPI.eval(root, xpath1).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;
-            } else if (XPathAPI.eval(root, xpath3).bool()) {
+            if (XPathAPI.eval(root, xpath3).bool()) {
 
                 xpath = "/document/automatic-styles/style[@name='" + styleName + "']/paragraph-properties/@page-number";
                 pagenum = Integer.parseInt(XPathAPI.eval(root, xpath).str());
                 pagenum--;
 
+                append = true;
+            } else if (XPathAPI.eval(root, xpath2).bool()) {
+                append = true;
+            } else if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             }
 
