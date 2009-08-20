@@ -851,6 +851,14 @@ public class OdtUtils {
             enumType =
                     XPathAPI.eval(root, xpath).str();
 
+
+            /** Patch for Overwritten page num-format */
+            xpath = "/document/master-styles/master-page[@name='" + masterPageName + "']//page-number/@num-format";
+            String enumTypeOverwrite = XPathAPI.eval(root, xpath).str();
+            if(enumTypeOverwrite.length()>0){
+                enumType = enumTypeOverwrite;
+            }
+            
             Element pageNode = root.getOwnerDocument().createElement("pagenum");
             pageNode.setAttribute("num", Integer.toString(pagenum));
             pageNode.setAttribute("enum", enumType);
