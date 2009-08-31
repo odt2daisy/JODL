@@ -885,63 +885,7 @@ public class OdtUtils {
 
         if (pageBreaks.getLength() > 0) {
 
-            NodeList childs = node.getChildNodes();
-
-            // text:p and text:h with text:soft-page-break (assert: only one text:soft-page-break !)
-            if (nName.equals("text:p") || nName.equals("text:h")) {
-
-
-                Node pageBreakNode = pageBreaks.item(0);
-
-                Node p1 = node.cloneNode(false);
-                Node p2 = node.cloneNode(false);
-
-                while (!childs.item(0).isSameNode(pageBreakNode)) {
-                    p1.appendChild(node.getChildNodes().item(0));
-                }
-
-                while (node.getChildNodes().getLength() > 1) {
-                    p2.appendChild(node.getChildNodes().item(1));
-                }
-
-                pagenum++;
-
-                Element pageNode = root.getOwnerDocument().createElement("pagenum");
-                pageNode.setAttribute("num", Integer.toString(pagenum));
-                pageNode.setAttribute("enum", enumType);
-                pageNode.setAttribute("render", Boolean.toString(incPageNum));
-                pageNode.setAttribute("value", String.valueOf(pagenum));
-
-                node.getParentNode().insertBefore(p1, node);
-                node.getParentNode().insertBefore(pageNode, node);
-                node.getParentNode().insertBefore(p2, node);
-                node.getParentNode().removeChild(node);
-
-            // text:list with text:soft-page-break
-            } else if (nName.equals("text:list")) {
-
-                for (int i = 0; i <
-                        pageBreaks.getLength(); i++) {
-
-                    pagenum++;
-
-                    Element pageNode = root.getOwnerDocument().createElement("pagenum");
-                    pageNode.setAttribute("num", Integer.toString(pagenum));
-                    pageNode.setAttribute("enum", enumType);
-                    pageNode.setAttribute("render", Boolean.toString(incPageNum));
-                    pageNode.setAttribute("value", String.valueOf(pagenum));
-
-                    Node n = pageBreaks.item(0).getParentNode();
-                    while (!n.getNodeName().equals("text:list-item")) {
-                        n = n.getParentNode();
-                    }
-
-                    n.getParentNode().insertBefore(pageNode, n);
-
-                }
-
-            // text:table-of-content with text:soft-page-break
-            } else if (node.getNodeName().equals("text:table-of-content") ||
+            if (node.getNodeName().equals("text:table-of-content") ||
                     node.getNodeName().equals("text:alphabetical-index") ||
                     node.getNodeName().equals("text:illustration-index") ||
                     node.getNodeName().equals("text:table-index") ||
@@ -963,10 +907,9 @@ public class OdtUtils {
                     pageBreaks.item(i).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(i).getParentNode());
                 }
 
-            } // table:table with text:soft-page-break (assert: soft-page-break always between <table:row>) 
-            else if (nName.equals("table:table")) {
+            } else {
 
-                for (int i = 0; i < pageBreaks.getLength(); i++) {
+                for(int i = 0; i < pageBreaks.getLength(); i++){
 
                     pagenum++;
 
@@ -975,10 +918,7 @@ public class OdtUtils {
                     pageNode.setAttribute("enum", enumType);
                     pageNode.setAttribute("render", Boolean.toString(incPageNum));
                     pageNode.setAttribute("value", String.valueOf(pagenum));
-
-                    pageBreaks.item(i).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(i).getParentNode());
-                //node.replaceChild(pageNode, pageBreaks.item(0));
-
+                    pageBreaks.item(i).getParentNode().replaceChild(pageNode, pageBreaks.item(i));
                 }
 
             }
