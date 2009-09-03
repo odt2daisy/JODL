@@ -219,7 +219,8 @@ public class OdtUtils {
         removeEmptyHeadings(root);
         normalizeTextS(contentDoc,root);
         removeEmptyParagraphs(root);
-        
+        insertEmptyParaForHeadings(contentDoc,root);
+
         saveDOM(contentDoc, xmlFile);
 
     }
@@ -561,6 +562,41 @@ public class OdtUtils {
 
     }
 
+    /**
+     * Add empty paragraph to heading x - heading x
+     * @param doc
+     * @param root
+     */
+    private static void insertEmptyParaForHeadings(Document doc, Node root){
+     
+        NodeList hNodes = ((Element) root).getElementsByTagName("text:h");
+        for (int i = 0; i < hNodes.getLength()-1; i++) {
+
+            Element hElem = (Element) hNodes.item(i);
+            Element nextElem;
+            Node nextNode = hElem.getNextSibling();
+
+            while (nextNode != null && nextNode.getNodeType() != Node.ELEMENT_NODE){
+                
+                nextNode = nextNode.getNextSibling();
+
+            }
+
+            nextElem = (Element) nextNode;
+
+            if(nextElem != null
+                    && nextElem.getNodeName().equals("text:h")
+                    && hElem.hasAttribute("text:outline-level")
+                    && nextElem.hasAttribute("text:outline-level")
+                    && hElem.getAttribute("text:outline-level").equals(
+                    nextElem.getAttribute("text:outline-level"))
+                    ){
+                Element para = doc.createElement("text:p");
+                hElem.getParentNode().insertBefore(para, nextNode);
+            }
+        }
+    }
+    
     private static void normalizeTextS(Document doc, Node root){
 
         NodeList sNodes = ((Element) root).getElementsByTagName("text:s");
