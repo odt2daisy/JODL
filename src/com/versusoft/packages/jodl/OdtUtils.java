@@ -921,13 +921,26 @@ public class OdtUtils {
 
         if (pageBreaks.getLength() > 0) {
 
-            if (node.getNodeName().equals("text:table-of-content") ||
-                    node.getNodeName().equals("text:alphabetical-index") ||
-                    node.getNodeName().equals("text:illustration-index") ||
-                    node.getNodeName().equals("text:table-index") ||
-                    node.getNodeName().equals("text:user-index") ||
-                    node.getNodeName().equals("text:object-index") ||
-                    node.getNodeName().equals("text:bibliography")) {
+            // case: text:h with a soft-page-break inside
+            if(nName.equals("text:h")){
+                
+                pagenum++;
+                Element pageNode = root.getOwnerDocument().createElement("pagenum");
+                pageNode.setAttribute("num", Integer.toString(pagenum));
+                pageNode.setAttribute("enum", enumType);
+                pageNode.setAttribute("render", Boolean.toString(incPageNum));
+                pageNode.setAttribute("value", String.valueOf(pagenum));
+
+                pageBreaks.item(0).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(0).getParentNode());
+                
+            // case: toc & indexes with a soft-page-break inside
+            } else if (nName.equals("text:table-of-content") ||
+                    nName.equals("text:alphabetical-index") ||
+                    nName.equals("text:illustration-index") ||
+                    nName.equals("text:table-index") ||
+                    nName.equals("text:user-index") ||
+                    nName.equals("text:object-index") ||
+                    nName.equals("text:bibliography")) {
 
                 for (int i = 0; i < pageBreaks.getLength(); i++) {
 
