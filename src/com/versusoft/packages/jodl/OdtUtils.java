@@ -52,7 +52,7 @@ import org.xml.sax.SAXException;
 
 /**
  * OdtUtils.java: convert zipped odt to flat odt xml. It provide also some nice fonctions
- * 
+ *
  * @author Vincent Spiewak
  */
 public class OdtUtils {
@@ -276,8 +276,8 @@ public class OdtUtils {
 
     /**
      * return an ArrayList of image(s) path(s) included in ODT file
-     * 
-     * @param odtFile 
+     *
+     * @param odtFile
      * @return ArrayList of image(s) path(s)
      * @throws java.io.IOException
      */
@@ -311,7 +311,7 @@ public class OdtUtils {
     /**
      * Extract pictures included inside an ODT file<br />
      * outDir can be: images, images/, pics/, book/pics/, ...
-     * 
+     *
      * @param odtFile
      * @param outDir
      * @throws java.io.IOException
@@ -347,7 +347,7 @@ public class OdtUtils {
 
     /**
      * Extract and normalize pictures names.
-     * 
+     *
      * @param xmlFile
      * @param odtFile
      * @param parentDir
@@ -462,7 +462,7 @@ public class OdtUtils {
 
     /**
      * Replace embed pictures base dir.
-     * 
+     *
      * @param xmlFile
      * @param imgBaseDir
      * @throws javax.xml.parsers.ParserConfigurationException
@@ -568,7 +568,7 @@ public class OdtUtils {
      * @param root
      */
     private static void insertEmptyParaForHeadings(Document doc, Node root){
-     
+
         NodeList hNodes = ((Element) root).getElementsByTagName("text:h");
         for (int i = 0; i < hNodes.getLength()-1; i++) {
 
@@ -577,7 +577,7 @@ public class OdtUtils {
             Node nextNode = hElem.getNextSibling();
 
             while (nextNode != null && nextNode.getNodeType() != Node.ELEMENT_NODE){
-                
+
                 nextNode = nextNode.getNextSibling();
 
             }
@@ -596,7 +596,7 @@ public class OdtUtils {
             }
         }
     }
-    
+
     private static void normalizeTextS(Document doc, Node root){
 
         NodeList sNodes = ((Element) root).getElementsByTagName("text:s");
@@ -607,11 +607,11 @@ public class OdtUtils {
 
             int c = 1;
             String s = "";
-            
+
             if(elem.hasAttribute("text:c")){
                 c = Integer.parseInt(elem.getAttribute("text:c"));
             }
-            
+
             for(int j=0; j<c; j++){
                 s += " ";
             }
@@ -687,7 +687,7 @@ public class OdtUtils {
             append = true;
         }
 
-        // text:p or text:h 
+        // text:p or text:h
         if (node.getNodeName().equals("text:p") || node.getNodeName().equals("text:h")) {
 
             styleName = node.getAttributes().getNamedItem("text:style-name").getNodeValue();
@@ -785,7 +785,7 @@ public class OdtUtils {
 
                 append = true;
             } else if (XPathAPI.eval(root, xpath2).bool()) {
-                append = true;               
+                append = true;
             } else if (XPathAPI.eval(root, xpath1).bool()) {
                 append = true;
             }
@@ -812,7 +812,17 @@ public class OdtUtils {
                 node.getNodeName().equals("text:object-index") ||
                 node.getNodeName().equals("text:bibliography")) {
 
-            styleName = ((org.w3c.dom.Element) ((org.w3c.dom.Element) ((org.w3c.dom.Element) node).getElementsByTagName("text:index-body").item(0)).getElementsByTagName("text:index-title").item(0)).getElementsByTagName("text:p").item(0).getAttributes().getNamedItem("text:style-name").getNodeValue();
+            Node indexBodyNode = ((Element)node).getElementsByTagName("text:index-body").item(0);
+            NodeList indexTitleNodes = ((Element)indexBodyNode).getElementsByTagName("text:index-title");
+
+            if(indexTitleNodes.getLength() > 0)
+                styleName = ((Element) indexTitleNodes.item(0)).
+                        getElementsByTagName("text:p").item(0).getAttributes().
+                        getNamedItem("text:style-name").getNodeValue();
+            else
+                styleName = ((Element) indexBodyNode).
+                        getElementsByTagName("text:p").item(0).getAttributes().
+                        getNamedItem("text:style-name").getNodeValue();
 
             // text:table-of-content break-before='page'
             xpath1 = "/document/automatic-styles/style[@name='" + styleName + "']/paragraph-properties[@break-before='page']";
@@ -894,7 +904,7 @@ public class OdtUtils {
             if(enumTypeOverwrite.length()>0){
                 enumType = enumTypeOverwrite;
             }
-            
+
             Element pageNode = root.getOwnerDocument().createElement("pagenum");
             pageNode.setAttribute("num", Integer.toString(pagenum));
             pageNode.setAttribute("enum", enumType);
@@ -923,7 +933,7 @@ public class OdtUtils {
 
             // case: text:h with a soft-page-break inside
             if(nName.equals("text:h")){
-                
+
                 pagenum++;
                 Element pageNode = root.getOwnerDocument().createElement("pagenum");
                 pageNode.setAttribute("num", Integer.toString(pagenum));
@@ -932,7 +942,7 @@ public class OdtUtils {
                 pageNode.setAttribute("value", String.valueOf(pagenum));
 
                 pageBreaks.item(0).getParentNode().getParentNode().insertBefore(pageNode, pageBreaks.item(0).getParentNode());
-                
+
             // case: toc & indexes with a soft-page-break inside
             } else if (nName.equals("text:table-of-content") ||
                     nName.equals("text:alphabetical-index") ||
