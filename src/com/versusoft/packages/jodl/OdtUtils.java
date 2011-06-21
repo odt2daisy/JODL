@@ -434,6 +434,7 @@ public class OdtUtils {
                 //String newImageName = id + ext;
                 //String newImagePath = parentDir + imgBaseDir + newImageName;
 
+                //@todo make method return an array of image names?
 //                if (ext.endsWith("gif") || ext.endsWith("bmp") || ext.endsWith("wbmp")) {
 //
 //                    hrefNode.setTextContent(imgBaseDir + id + ".png");
@@ -1023,9 +1024,9 @@ public class OdtUtils {
             Node objectContentNode = objectDoc.getDocumentElement();
 
             String tagName = objectContentNode.getNodeName();
-            logger.fine(tagName);
+            logger.fine("tagName=" + tagName);
 
-            if (tagName.equals("math:math")) {
+            if (tagName.equals("math:math") || tagName.equals("math")) {
                 logger.fine("replacing math");
 
                 Node newObjectNode = contentDoc.createElement("draw:object");
