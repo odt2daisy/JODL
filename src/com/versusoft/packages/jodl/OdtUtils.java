@@ -218,6 +218,7 @@ public class OdtUtils {
 
         removeEmptyHeadings(root);
         normalizeTextS(contentDoc,root);
+        // @todo make removing empty paragraphs an option in odt2daisy dialog.
         removeEmptyParagraphs(root);
         insertEmptyParaForHeadings(contentDoc,root);
 
@@ -435,26 +436,22 @@ public class OdtUtils {
                 //String newImagePath = parentDir + imgBaseDir + newImageName;
 
                 //@todo make method return an array of image names?
-//                if (ext.endsWith("gif") || ext.endsWith("bmp") || ext.endsWith("wbmp")) {
-//
-//                    hrefNode.setTextContent(imgBaseDir + id + ".png");
-//                    logger.fine("extract image\n");
-//                    copyInputStream(zip.getInputStream(zip.getEntry(imagePath)), new FileOutputStream(parentDir + imgBaseDir + id + ext));
-//                    logger.fine("convert to png\n");
-//                    toPNG(parentDir + imgBaseDir + id + ext, parentDir + imgBaseDir + id + ".png");
-//                    logger.fine("delete old image\n");
-//                    new File(parentDir + imgBaseDir + id + ext).delete();
-//
-//                } else {
+                //if (ext.endsWith("gif") || ext.endsWith("bmp") || ext.endsWith("wbmp")) {
+                //    hrefNode.setTextContent(imgBaseDir + id + ".png");
+                //    logger.fine("extract image\n");
+                //    copyInputStream(zip.getInputStream(zip.getEntry(imagePath)), new FileOutputStream(parentDir + imgBaseDir + id + ext));
+                //    logger.fine("convert to png\n");
+                //    toPNG(parentDir + imgBaseDir + id + ext, parentDir + imgBaseDir + id + ".png");
+                //    logger.fine("delete old image\n");
+                //    new File(parentDir + imgBaseDir + id + ext).delete();
+                //} else {
                 hrefNode.setTextContent(imgBaseDir + id + ext);
                 logger.fine("extract image\n");
                 copyInputStream(zip.getInputStream(zip.getEntry(imagePath)), new FileOutputStream(parentDir + imgBaseDir + id + ext));
-//                }
+                //}
 
                 logger.fine("done\n");
-
             }
-
         }
 
         saveDOM(contentDoc, xmlFile);
