@@ -347,33 +347,27 @@ public class OdtUtils {
     }
 
     /**
-     * Extract and normalize pictures names.
+     * Extract and normalize picture names.
      *
      * @param xmlFile
      * @param odtFile
      * @param parentDir
      * @param imgBaseDir
-     * @throws org.xml.sax.SAXException
-     * @throws org.xml.sax.SAXException
-     * @throws java.io.IOException
-     * @throws javax.xml.parsers.ParserConfigurationException
-     * @throws javax.xml.transform.TransformerConfigurationException
-     * @throws javax.xml.transform.TransformerException
+     * @throws org.xml.sax.SAXException If an input source for the XML content cannot be created.
+     * @throws java.io.IOException If the String representing the image directory is actually a file instead of a directory, or if an input source for the XML content cannot be created.
+     * @throws javax.xml.parsers.ParserConfigurationException If a DocumentBuilder cannot be created which satisfies the configuration requested, i.e. a validating parser cannot be created.
+     * @throws javax.xml.transform.TransformerConfigurationException If a a serious configuration error occured.
+     * @throws javax.xml.transform.TransformerException If an exceptional condition occured during the transformation process.
      */
-    public static void extractAndNormalizedEmbedPictures(String xmlFile, String odtFile, String parentDir, String imgBaseDir) throws SAXException, SAXException, IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
+    public static void extractAndNormalizeEmbedPictures(String xmlFile, String odtFile, String parentDir, String imgBaseDir) throws SAXException, IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
 
         logger.fine("entering");
 
         ZipFile zip;
-
         File imgDir;
-
         ArrayList<String> pics;
-
         DocumentBuilderFactory docFactory;
-
         DocumentBuilder docBuilder;
-
         Document contentDoc;
 
         pics = getPictures(odtFile);
