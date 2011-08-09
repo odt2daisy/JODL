@@ -137,7 +137,7 @@ public class CommandLineGUI {
             try {
 
                 String basedir = new File(cmd.getOptionValue("out")).getParent().toString() + System.getProperty("file.separator");
-                OdtUtils.extractAndNormalizedEmbedPictures(cmd.getOptionValue("out"), cmd.getOptionValue("in"), basedir, imageDir);
+                OdtUtils.extractAndNormalizeEmbedPictures(cmd.getOptionValue("out"), cmd.getOptionValue("in"), basedir, imageDir);
             } catch (SAXException ex) {
                 logger.log(Level.SEVERE, null, ex);
             } catch (ParserConfigurationException ex) {
