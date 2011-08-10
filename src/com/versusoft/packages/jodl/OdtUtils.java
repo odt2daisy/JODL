@@ -1,7 +1,7 @@
 /**
  *  odt2daisy - OpenDocument to DAISY XML/Audio
  *
- *  (c) Copyright 2008 - 2009 by Vincent Spiewak, All Rights Reserved.
+ *  (c) Copyright 2008 - 2011 by Vincent Spiewak, All Rights Reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Lesser Public License as published by
@@ -67,6 +67,13 @@ public class OdtUtils {
     private Element root;
     private ZipFile zf;
 
+    /**
+     * Merges the content of meta.xml, styles.xml, content.xml and settings.xml
+     * into a single XML file where the document element is called
+     * "office:document" and adds namespace attributes to this new XML document.
+     *
+     * @param odtFile The ODF file.
+     */
     public void open(String odtFile) {
         try {
 
@@ -167,17 +174,37 @@ public class OdtUtils {
 
     }
 
+    /**
+     * Saves the merged XML content of the ODF file as a file
+     * with the chosen file name.
+     * 
+     * @param fileOut The file to which the DOM should be saved. The String must conform to the URI syntax.
+     * @return true if the file could be saved; false if the file could not be saved.
+     */
     public boolean saveXML(String fileOut) {
 
         return saveDOM(doc, fileOut);
 
     }
 
+    /**
+     * Performs a few basic corrections on the XML content.
+     * 
+     * @see OdtUtils#removeEmptyHeadings(org.w3c.dom.Node)
+     * @see OdtUtils#normalizeTextS(org.w3c.dom.Document, org.w3c.dom.Node)
+     * @see OdtUtils#removeEmptyParagraphs(org.w3c.dom.Node)
+     * @see OdtUtils#insertEmptyParaForHeadings(org.w3c.dom.Document, org.w3c.dom.Node) 
+     *
+     * @param xmlFile The path to the XML file.
+     * @throws ParserConfigurationException If a DocumentBuilder cannot be created which satisfies the configuration requested.
+     * @throws SAXException If an exceptional condition occurred while parsing the XML file.
+     * @throws IOException If an exceptional condition occurred while parsing the XML file.
+     * @throws TransformerConfigurationException If a serious transformer configuration error occurred.
+     * @throws TransformerException If an exceptional condition occurred during an XPath query.
+     */
     public static void correctionProcessing(String xmlFile)
-            throws ParserConfigurationException, SAXException, SAXException,
-            IOException, IOException, TransformerConfigurationException,
-            TransformerConfigurationException, TransformerConfigurationException,
-            TransformerConfigurationException, TransformerConfigurationException,
+            throws ParserConfigurationException, SAXException, 
+            IOException, TransformerConfigurationException,
             TransformerException {
 
         DocumentBuilderFactory docFactory;
@@ -226,11 +253,19 @@ public class OdtUtils {
 
     }
 
+    /**
+     * @todo Add method description.
+     * @param xmlFile The path to the XML file.
+     * @throws ParserConfigurationException If a DocumentBuilder cannot be created which satisfies the configuration requested.
+     * @throws SAXException If an exceptional condition occurred while parsing the XML file.
+     * @throws IOException If an exceptional condition occurred while parsing the XML file.
+     * @throws TransformerConfigurationException If a serious transformer configuration error occurred
+     * @throws TransformerException If an exceptional condition occurred during 
+     * an XPath query or while inserting pagination.
+     */
     public static void paginationProcessing(String xmlFile)
-            throws ParserConfigurationException, SAXException, SAXException,
-            IOException, IOException, TransformerConfigurationException,
-            TransformerConfigurationException, TransformerConfigurationException,
-            TransformerConfigurationException, TransformerConfigurationException,
+            throws ParserConfigurationException, SAXException, 
+            IOException, TransformerConfigurationException,
             TransformerException {
 
         DocumentBuilderFactory docFactory;
@@ -276,11 +311,11 @@ public class OdtUtils {
     }
 
     /**
-     * return an ArrayList of image(s) path(s) included in ODT file
+     * Return an ArrayList of image(s) path(s) included in the ODF file.
      *
-     * @param odtFile
+     * @param odtFile The path to the ODF file.
      * @return ArrayList of image(s) path(s)
-     * @throws java.io.IOException
+     * @throws java.io.IOException If an exceptional condition occurred while creating a ZipFile based on the path to the ODF file.
      */
     public static ArrayList<String> getPictures(String odtFile) throws IOException {
         ArrayList<String> ret = new ArrayList<String>();
@@ -429,7 +464,6 @@ public class OdtUtils {
                 //String newImageName = id + ext;
                 //String newImagePath = parentDir + imgBaseDir + newImageName;
 
-                //@todo make method return an array of image names?
                 //if (ext.endsWith("gif") || ext.endsWith("bmp") || ext.endsWith("wbmp")) {
                 //    hrefNode.setTextContent(imgBaseDir + id + ".png");
                 //    logger.fine("extract image\n");
@@ -654,6 +688,29 @@ public class OdtUtils {
         }
     }
 
+    // Christophe's best guess for this method's JavaDoc:
+    /**
+     *
+     * @param root The document element (or "root element") of the XML instance.
+     * @param node The current node in the XML instance.
+     * @param pagenum The current page number.
+     * @param incPageNum true if the document contains <code>page-number</code> elements; false if otherwise (??).
+     * @param enumType The page number format (<code>style:num-format</code>), which specifies a numbering sequence.
+     * According to the ODF 1.2 specification, the defined values for the style:num-format attribute are:<ul>
+     * <li><code>1</code>: Hindu-Arabic number sequence starts with 1.</li>
+     * <li><code>a</code>: number sequence of lowercase Modern Latin basic alphabet characters starts with "a".</li>
+     * <li><code>A</code>: number sequence of uppercase Modern Latin basic alphabet characters starts with "A".</li>
+     * <li><code>i</code>: number sequence of lowercase Roman numerals starts with "i".</li>
+     * <li><code>I</code>: number sequence of uppercase Roman numerals start with "I".</li>
+     * <li>a value of type <code>string<code> (see chapter 18.2 of the ODF specification).</li>
+     * <li>an empty string: no number sequence displayed.</li></ul>
+     * If no value is given, no number sequence is displayed.
+     * @param masterPageName The master page for a paragraph or table style (<code>style:master-page-name</code>), e.g. "Standard".
+     * @param isFirst true if it is the first element in the document; false otherwise.
+     * @param recCall true if the method should recursively call itself to process the next sibling; false otherwise.
+     * @return The next page number.
+     * @throws TransformerException
+     */
     private static int insertPagination(Node root, Node node, int pagenum, boolean incPageNum, String enumType, String masterPageName, boolean isFirst, boolean recCall) throws TransformerException {
 
         Node next = null;
@@ -977,7 +1034,7 @@ public class OdtUtils {
         }
 
 
-        // recursif call on next sibling
+        // recursive call on next sibling
         if (next != null && recCall) {
             //System.out.println("next: " + next.getNodeName() + " value: " + next.getTextContent());
             pagenum = insertPagination(root, next, pagenum, incPageNum, enumType, masterPageName, false, true);
@@ -1043,6 +1100,13 @@ public class OdtUtils {
         out.close();
     }
 
+    /**
+     * Saves a document object model (DOM) as a file with the chosen file name.
+     * 
+     * @param doc DOM representation of XML instance.
+     * @param filename The file to which the DOM should be saved. The String must conform to the URI syntax.
+     * @return true if the file could be saved; false if the file could not be saved.
+     */
     public static boolean saveDOM(Document doc, String filename) {
         boolean save = false;
         try {
