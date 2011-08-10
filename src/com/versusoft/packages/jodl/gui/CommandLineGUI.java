@@ -1,7 +1,7 @@
 /**
  *  odt2daisy - OpenDocument to DAISY XML/Audio
  *
- *  (c) Copyright 2008 - 2009 by Vincent Spiewak, All Rights Reserved.
+ *  (c) Copyright 2008 - 2011 by Vincent Spiewak, All Rights Reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Lesser Public License as published by
@@ -167,7 +167,7 @@ public class CommandLineGUI {
         System.out.println("java -jar JODL -in ./input.odt -out ./output.xml -pic images/");
         System.out.println("java -jar JODL -in ./input.odt -out ./output.xml -pic images/ -page");
         System.out.println("");
-        System.out.println("(C) Copyright 2008  Vincent Spiewak");
+        System.out.println("(C) Copyright 2008-2011  Vincent Spiewak");
 
     }
 }
