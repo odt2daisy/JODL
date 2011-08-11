@@ -253,8 +253,10 @@ public class OdtUtils {
 
     }
 
+    // Christophe's best guess for this method's JavaDoc:
     /**
-     * @todo Add method description.
+     * Facilitate page numbering support.
+     *
      * @param xmlFile The path to the XML file.
      * @throws ParserConfigurationException If a DocumentBuilder cannot be created which satisfies the configuration requested.
      * @throws SAXException If an exceptional condition occurred while parsing the XML file.
@@ -486,14 +488,15 @@ public class OdtUtils {
         logger.fine("done");
     }
 
+    // @todo remove unused method?
     /**
      * Replace embed pictures base dir.
      *
-     * @param xmlFile
+     * @param xmlFile 
      * @param imgBaseDir
-     * @throws javax.xml.parsers.ParserConfigurationException
-     * @throws org.xml.sax.SAXException
-     * @throws java.io.IOException
+     * @throws javax.xml.parsers.ParserConfigurationException If a DocumentBuilder for the XML file cannot be created which satisfies the configuration requested.
+     * @throws org.xml.sax.SAXException If the <code>EntityResolver</code> to be used to resolve entities present in the XML document cannot be created, or if an error occurs while parsing the XML file.
+     * @throws java.io.IOException If the <code>EntityResolver</code> to be used to resolve entities present in the XML document cannot be created, or if an error occurs while parsing the XML file.
      * @throws javax.xml.transform.TransformerConfigurationException
      * @throws javax.xml.transform.TransformerException
      */
@@ -527,6 +530,14 @@ public class OdtUtils {
         saveDOM(contentDoc, xmlFile);
     }
 
+    /**
+     * Replace embed pictures base dir.
+     *
+     * @param contentDoc A DOM Document object.
+     * @param imgBaseDir
+     * @throws IOException
+     * @throws SAXException
+     */
     private static void replaceEmbedPicturesBaseDir(Document contentDoc, String imgBaseDir) throws IOException, SAXException {
 
         Element root = contentDoc.getDocumentElement();
@@ -538,7 +549,7 @@ public class OdtUtils {
             Node objectNode = nodelist.item(i);
             Node hrefNode = objectNode.getAttributes().getNamedItem("xlink:href");
 
-            String imagePath = hrefNode.getTextContent();
+            String imagePath = hrefNode.getTextContent(); // throws org.w3c.dom.DOMException ?
             logger.fine("image path=" + imagePath);
 
             if (imagePath.startsWith(PICTURE_FOLDER)) {
@@ -552,7 +563,11 @@ public class OdtUtils {
 
     }
 
-
+    /**
+     * Remove empty <code>text:h</code> elements.
+     * 
+     * @param root The document element (or "root element").
+     */
     private static void removeEmptyHeadings(Node root){
 
         // for each text:h
@@ -590,8 +605,9 @@ public class OdtUtils {
 
     /**
      * Add empty paragraph to heading x - heading x
-     * @param doc
-     * @param root
+     *
+     * @param doc A DOM Document object.
+     * @param root The document element (or "root element").
      */
     private static void insertEmptyParaForHeadings(Document doc, Node root){
 
@@ -623,6 +639,21 @@ public class OdtUtils {
         }
     }
 
+    /**
+     * Normalize space characters.<br />
+     * The <code>text:s</code> element is used to represent the Unicode
+     * character " " (U+0020, SPACE).<br />
+     * ODF 1.2 specification, section 6.1.3: <q>This element shall be used to
+     * represent the second and all following " " (U+0020, SPACE) characters
+     * in a sequence of " " (U+0020, SPACE) characters.</q><br />
+     * ODF 1.2 specification, section 19.673: <q>The <code>text:c</code> attribute
+     * specifies the number of " " (U+0020, SPACE) characters that a
+     * <code>text:s</code> element represents. A missing <code>text:c</code>
+     * attribute is interpreted as a single " " (U+0020, SPACE).</q>
+     *
+     * @param doc A DOM Document object.
+     * @param root The document element (or "root element").
+     */
     private static void normalizeTextS(Document doc, Node root){
 
         NodeList sNodes = ((Element) root).getElementsByTagName("text:s");
@@ -648,6 +679,11 @@ public class OdtUtils {
         }
     }
 
+    /**
+     * Remove empty <code>text:p</code> elements.
+     * 
+     * @param root The document element (or "root element").
+     */
     private static void removeEmptyParagraphs(Node root){
 
         // for each text:p
@@ -690,7 +726,8 @@ public class OdtUtils {
 
     // Christophe's best guess for this method's JavaDoc:
     /**
-     *
+     * Insert <code>pagenum</code> elements to facilitate page numbering support.
+     * 
      * @param root The document element (or "root element") of the XML instance.
      * @param node The current node in the XML instance.
      * @param pagenum The current page number.
