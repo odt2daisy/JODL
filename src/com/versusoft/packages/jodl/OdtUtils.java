@@ -324,7 +324,7 @@ public class OdtUtils {
     public static ArrayList<String> getPictures(String odtFile) throws IOException {
         ArrayList<String> ret = new ArrayList<String>();
         ZipFile zf = null;
-        Enumeration entries = null;
+        Enumeration<? extends ZipEntry> entries = null;
 
         zf =
                 new ZipFile(odtFile);
