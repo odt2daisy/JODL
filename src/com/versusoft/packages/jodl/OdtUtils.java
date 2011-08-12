@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -313,7 +314,8 @@ public class OdtUtils {
     }
 
     /**
-     * Return an ArrayList of image(s) path(s) included in the ODF file.
+     * Return an ArrayList of image(s) path(s) included in the ODF file,
+     * i.e. a ArrayList of Strings like 'Pictures/100000000000034300000273CAF76237.png'.
      *
      * @param odtFile The path to the ODF file.
      * @return ArrayList of image(s) path(s)
@@ -384,19 +386,23 @@ public class OdtUtils {
     }
 
     /**
-     * Extract and normalize picture names.
+     * Extract and normalize picture names, i.e.
+     * converts <code>xlink:href</code> values like
+     * 'Pictures/100000000000034300000273CAF76237.png'
+     * into values like 'images/0.png'.
      *
-     * @param xmlFile
-     * @param odtFile
-     * @param parentDir
-     * @param imgBaseDir
+     * @param xmlFile The path to the XML file (merged XML files inside the ODF file).
+     * @param odtFile The path to the ODF file.
+     * @param parentDir The parent directory (of the new directory for the images (??)).
+     * @param imgBaseDir The new directory for the images.
+     * @return LinkedHashMap where keys are old file names and values are new file names.
      * @throws org.xml.sax.SAXException If an input source for the XML content cannot be created.
      * @throws java.io.IOException If the String representing the image directory is actually a file instead of a directory, or if an input source for the XML content cannot be created.
      * @throws javax.xml.parsers.ParserConfigurationException If a DocumentBuilder cannot be created which satisfies the configuration requested, i.e. a validating parser cannot be created.
      * @throws javax.xml.transform.TransformerConfigurationException If a a serious configuration error occured.
      * @throws javax.xml.transform.TransformerException If an exceptional condition occured during the transformation process.
      */
-    public static void extractAndNormalizeEmbedPictures(String xmlFile, String odtFile, String parentDir, String imgBaseDir) throws SAXException, IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
+    public static LinkedHashMap<String,String> extractAndNormalizeEmbedPictures(String xmlFile, String odtFile, String parentDir, String imgBaseDir) throws SAXException, IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
 
         logger.fine("entering");
 
@@ -406,12 +412,14 @@ public class OdtUtils {
         DocumentBuilderFactory docFactory;
         DocumentBuilder docBuilder;
         Document contentDoc;
+        LinkedHashMap<String,String> oldAndNewImgNames = new LinkedHashMap<String,String>();
 
         pics = getPictures(odtFile);
         zip = new ZipFile(odtFile);
 
+        // @todo clean up / irrelevant after making method return oldAndNewImgNames:
         if (pics.size() < 1) {
-            return;
+            return oldAndNewImgNames;
         }
 
         imgDir = new File(parentDir + imgBaseDir);
@@ -449,18 +457,20 @@ public class OdtUtils {
         Element root = contentDoc.getDocumentElement();
         NodeList nodelist = root.getElementsByTagName("draw:image");
 
-
+        // for every draw:image element in the merged XML:
         for (int i = 0; i < nodelist.getLength(); i++) {
 
             Node objectNode = nodelist.item(i);
             Node hrefNode = objectNode.getAttributes().getNamedItem("xlink:href");
 
             String imagePath = hrefNode.getTextContent();
-            logger.fine("image path:" + imagePath);
+            logger.fine("Image path: " + imagePath);
 
+            // if the xlink:href value can be found in the list of images from the ODF file:
             if (pics.contains(imagePath)) {
 
                 int id = pics.indexOf(imagePath);
+                // create file extension based on original extension turned to lower case:
                 String ext = imagePath.substring(imagePath.lastIndexOf(".")).toLowerCase();
 
                 //String newImageName = id + ext;
@@ -475,17 +485,24 @@ public class OdtUtils {
                 //    logger.fine("delete old image\n");
                 //    new File(parentDir + imgBaseDir + id + ext).delete();
                 //} else {
-                hrefNode.setTextContent(imgBaseDir + id + ext);
-                logger.fine("extract image\n");
+                // Set xlink:href value to new image directory + image index + image extension (lower case):
+                String newXlinkHref = imgBaseDir + id + ext;
+                hrefNode.setTextContent(newXlinkHref);
+                logger.fine("extracted image: " + newXlinkHref + "\n");
+                // Store mapping between new and old image names:
+                oldAndNewImgNames.put(imagePath, newXlinkHref);
                 copyInputStream(zip.getInputStream(zip.getEntry(imagePath)), new FileOutputStream(parentDir + imgBaseDir + id + ext));
                 //}
 
+                //@todo Remove logger output after testing
+                logger.fine("Image mapping = " + oldAndNewImgNames.toString());
                 logger.fine("done\n");
             }
         }
 
         saveDOM(contentDoc, xmlFile);
         logger.fine("done");
+        return oldAndNewImgNames;
     }
 
     // @todo remove unused method?
