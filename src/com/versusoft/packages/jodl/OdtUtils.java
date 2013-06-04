@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -83,7 +84,22 @@ public class OdtUtils {
             zf = null;
             this.odtFile = odtFile;
 
+            docFactory = DocumentBuilderFactory.newInstance();
+            docFactory.setValidating(false);
+            docBuilder = docFactory.newDocumentBuilder();
+            docBuilder.setEntityResolver(new EntityResolver() {
 
+            public InputSource resolveEntity(java.lang.String publicId, java.lang.String systemId) throws SAXException, java.io.IOException {
+                    return new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
+                }
+            });         
+
+            if (!this.isOdtPackage(odtFile)) {
+                doc = docBuilder.parse(odtFile);
+                root = doc.getDocumentElement();
+                return;
+            }
+            
             zf = new ZipFile(odtFile);
 
             ZipEntry metaEntry = zf.getEntry("meta.xml");
@@ -91,23 +107,9 @@ public class OdtUtils {
             ZipEntry contentEntry = zf.getEntry("content.xml");
             ZipEntry settingsEntry = zf.getEntry("settings.xml");
 
-            docFactory = DocumentBuilderFactory.newInstance();
-            docFactory.setValidating(false);
-
-
-            docBuilder = docFactory.newDocumentBuilder();
-            docBuilder.setEntityResolver(new EntityResolver() {
-
-                public InputSource resolveEntity(java.lang.String publicId, java.lang.String systemId) throws SAXException, java.io.IOException {
-
-                    return new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
-                }
-            });
-
             doc = docBuilder.newDocument();
 
             Element racine = doc.createElement("office:document");
-
 
             Document metaDoc = docBuilder.parse(zf.getInputStream(metaEntry));
             Document stylesDoc = docBuilder.parse(zf.getInputStream(stylesEntry));
@@ -139,6 +141,10 @@ public class OdtUtils {
             racine.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
             racine.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             racine.setAttribute("xmlns:config", "urn:oasis:names:tc:opendocument:xmlns:config:1.0");
+            racine.setAttribute("xmlns:ooo", "http://openoffice.org/2004/office");
+            racine.setAttribute("xmlns:officeooo", "http://openoffice.org/2009/office");
+            racine.setAttribute("xmlns:drawooo", "http://openoffice.org/2009/draw");
+            racine.setAttribute("xmlns:manifest", "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
 
             NodeList nodelist = metaDoc.getDocumentElement().getChildNodes();
             for (int i = 0; i < nodelist.getLength(); i++) {
@@ -188,6 +194,28 @@ public class OdtUtils {
 
     }
 
+    /**
+     * Test if a file is an ODT package file.
+     *
+     * @param f
+     *            the file path to test.
+     * @return boolean
+     */
+    private boolean isOdtPackage(String f) {
+        boolean isPackage = false;
+        try {
+            RandomAccessFile raf = new RandomAccessFile(f, "r");  
+            long n = raf.readInt();  
+            raf.close();  
+            if (n == 0x504B0304)  
+                isPackage = true;
+        } catch (Throwable e) {}
+        
+        return isPackage;
+    }
+ 
+    
+    
     /**
      * Performs a few basic corrections on the XML content.
      * 
