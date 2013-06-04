@@ -139,6 +139,10 @@ public class OdtUtils {
             racine.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
             racine.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             racine.setAttribute("xmlns:config", "urn:oasis:names:tc:opendocument:xmlns:config:1.0");
+            racine.setAttribute("xmlns:ooo", "http://openoffice.org/2004/office");
+            racine.setAttribute("xmlns:officeooo", "http://openoffice.org/2009/office");
+            racine.setAttribute("xmlns:drawooo", "http://openoffice.org/2009/draw");
+            racine.setAttribute("xmlns:manifest", "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
 
             NodeList nodelist = metaDoc.getDocumentElement().getChildNodes();
             for (int i = 0; i < nodelist.getLength(); i++) {
