@@ -244,6 +244,7 @@ public class OdtUtils {
         }
 
         removeEmptyHeadings(root);
+        normalizePictureIds(root);
         normalizeTextS(contentDoc,root);
         // @todo make removing empty paragraphs an option in odt2daisy dialog.
         removeEmptyParagraphs(root);
@@ -578,7 +579,30 @@ public class OdtUtils {
         }
 
     }
-
+    
+    /**
+     * Normalize Picture Ids by replacing spaces with underscores.
+     * 
+     * @param root The document element (or "root element").
+     */
+    private static void normalizePictureIds(Node root){
+                // for each text:h
+        // remove empty headings
+        NodeList picNodes = ((Element) root).getElementsByTagName("draw:frame");
+        for (int i = 0; i < picNodes.getLength(); i++) {
+            Node node = picNodes.item(i);
+            if(node.hasAttributes()) {
+                Node picIdNode = node.getAttributes().getNamedItem("draw:name");
+                if(picIdNode != null) {
+                    String picId = picIdNode.getNodeValue();
+                    picId = picId.trim().replace(" ", "_");
+                    logger.info("Normalized picture id from '"+picIdNode.getNodeValue()+"' to '"+picId+"'");
+                    picIdNode.setTextContent(picId);
+                }
+            }
+        }
+    }
+    
     /**
      * Remove empty <code>text:h</code> elements.
      * 
