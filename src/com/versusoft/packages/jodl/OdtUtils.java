@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -93,12 +92,6 @@ public class OdtUtils {
                     return new InputSource(new ByteArrayInputStream("<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
                 }
             });         
-
-            if (!this.isOdtPackage(odtFile)) {
-                doc = docBuilder.parse(odtFile);
-                root = doc.getDocumentElement();
-                return;
-            }
             
             zf = new ZipFile(odtFile);
 
@@ -195,28 +188,6 @@ public class OdtUtils {
     }
 
     /**
-     * Test if a file is an ODT package file.
-     *
-     * @param f
-     *            the file path to test.
-     * @return boolean
-     */
-    private boolean isOdtPackage(String f) {
-        boolean isPackage = false;
-        try {
-            RandomAccessFile raf = new RandomAccessFile(f, "r");  
-            long n = raf.readInt();  
-            raf.close();  
-            if (n == 0x504B0304)  
-                isPackage = true;
-        } catch (Throwable e) {}
-        
-        return isPackage;
-    }
- 
-    
-    
-    /**
      * Performs a few basic corrections on the XML content.
      * 
      * @see OdtUtils#removeEmptyHeadings(org.w3c.dom.Node)
@@ -273,6 +244,7 @@ public class OdtUtils {
         }
 
         removeEmptyHeadings(root);
+        normalizePictureIds(root);
         normalizeTextS(contentDoc,root);
         // @todo make removing empty paragraphs an option in odt2daisy dialog.
         removeEmptyParagraphs(root);
@@ -607,7 +579,30 @@ public class OdtUtils {
         }
 
     }
-
+    
+    /**
+     * Normalize Picture Ids by replacing spaces with underscores.
+     * 
+     * @param root The document element (or "root element").
+     */
+    private static void normalizePictureIds(Node root){
+                // for each text:h
+        // remove empty headings
+        NodeList picNodes = ((Element) root).getElementsByTagName("draw:frame");
+        for (int i = 0; i < picNodes.getLength(); i++) {
+            Node node = picNodes.item(i);
+            if(node.hasAttributes()) {
+                Node picIdNode = node.getAttributes().getNamedItem("draw:name");
+                if(picIdNode != null) {
+                    String picId = picIdNode.getNodeValue();
+                    picId = picId.trim().replace(" ", "_");
+                    logger.info("Normalized picture id from '"+picIdNode.getNodeValue()+"' to '"+picId+"'");
+                    picIdNode.setTextContent(picId);
+                }
+            }
+        }
+    }
+    
     /**
      * Remove empty <code>text:h</code> elements.
      * 
