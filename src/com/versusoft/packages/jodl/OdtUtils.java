@@ -595,6 +595,7 @@ public class OdtUtils {
                 Node picIdNode = node.getAttributes().getNamedItem("draw:name");
                 if(picIdNode != null) {
                     String picId = picIdNode.getNodeValue();
+                    if(!picId.contains(" ")) return;
                     picId = picId.trim().replace(" ", "_");
                     logger.info("Normalized picture id from '"+picIdNode.getNodeValue()+"' to '"+picId+"'");
                     picIdNode.setTextContent(picId);
