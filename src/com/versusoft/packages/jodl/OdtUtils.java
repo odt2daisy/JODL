@@ -111,34 +111,33 @@ public class OdtUtils {
 
             replaceObjectContent(docBuilder, contentDoc, zf);
 
-            racine.setAttribute("xmlns:meta", "urn:oasis:names:tc:opendocument:xmlns:meta:1.0");
-            racine.setAttribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform");
-            racine.setAttribute("xmlns:office", "urn:oasis:names:tc:opendocument:xmlns:office:1.0");
-            racine.setAttribute("xmlns:style", "urn:oasis:names:tc:opendocument:xmlns:style:1.0");
-            racine.setAttribute("xmlns:text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0");
-            racine.setAttribute("xmlns:table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
+            racine.setAttribute("xmlns:chart", "urn:oasis:names:tc:opendocument:xmlns:chart:1.0");
+            racine.setAttribute("xmlns:config", "urn:oasis:names:tc:opendocument:xmlns:config:1.0");
+            racine.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
+            racine.setAttribute("xmlns:dom", "http://www.w3.org/2001/xml-events");
+            racine.setAttribute("xmlns:dr3d", "urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0");
             racine.setAttribute("xmlns:draw", "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0");
+            racine.setAttribute("xmlns:drawooo", "http://openoffice.org/2009/draw");
             racine.setAttribute("xmlns:fo", "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0");
+            racine.setAttribute("xmlns:form", "urn:oasis:names:tc:opendocument:xmlns:form:1.0");
+            racine.setAttribute("xmlns:manifest", "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
+            racine.setAttribute("xmlns:math", "http://www.w3.org/1998/Math/MathML");
             racine.setAttribute("xmlns:meta", "urn:oasis:names:tc:opendocument:xmlns:meta:1.0");
             racine.setAttribute("xmlns:number", "urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0");
-            racine.setAttribute("xmlns:svg", "urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0");
-            racine.setAttribute("xmlns:chart", "urn:oasis:names:tc:opendocument:xmlns:chart:1.0");
-            racine.setAttribute("xmlns:dr3d", "urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0");
-            racine.setAttribute("xmlns:form", "urn:oasis:names:tc:opendocument:xmlns:form:1.0");
+            racine.setAttribute("xmlns:office", "urn:oasis:names:tc:opendocument:xmlns:office:1.0");
+            racine.setAttribute("xmlns:officeooo", "http://openoffice.org/2009/office");
+            racine.setAttribute("xmlns:ooo", "http://openoffice.org/2004/office");
             racine.setAttribute("xmlns:script", "urn:oasis:names:tc:opendocument:xmlns:script:1.0");
-            racine.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-            racine.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-            racine.setAttribute("xmlns:math", "http://www.w3.org/1998/Math/MathML");
-            racine.setAttribute("xmlns:dom", "http://www.w3.org/2001/xml-events");
+            racine.setAttribute("xmlns:style", "urn:oasis:names:tc:opendocument:xmlns:style:1.0");
+            racine.setAttribute("xmlns:svg", "urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0");
+            racine.setAttribute("xmlns:table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
+            racine.setAttribute("xmlns:text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0");
             racine.setAttribute("xmlns:xforms", "http://www.w3.org/2002/xforms");
+            racine.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
             racine.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
             racine.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            racine.setAttribute("xmlns:config", "urn:oasis:names:tc:opendocument:xmlns:config:1.0");
-            racine.setAttribute("xmlns:ooo", "http://openoffice.org/2004/office");
-            racine.setAttribute("xmlns:officeooo", "http://openoffice.org/2009/office");
-            racine.setAttribute("xmlns:drawooo", "http://openoffice.org/2009/draw");
-            racine.setAttribute("xmlns:manifest", "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
-
+            racine.setAttribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform");
+            
             NodeList nodelist = metaDoc.getDocumentElement().getChildNodes();
             for (int i = 0; i < nodelist.getLength(); i++) {
                 racine.appendChild(doc.importNode(nodelist.item(i), true));
