@@ -594,9 +594,11 @@ public class OdtUtils {
                 Node picIdNode = node.getAttributes().getNamedItem("draw:name");
                 if(picIdNode != null) {
                     String picId = picIdNode.getNodeValue();
-                    picId = picId.trim().replace(" ", "_");
-                    logger.info("Normalized picture id from '"+picIdNode.getNodeValue()+"' to '"+picId+"'");
-                    picIdNode.setTextContent(picId);
+                    String newId = picId.trim().replace(" ", "_");
+                    if(!picId.equals(newId)) { 
+                        logger.info("Normalized picture id from '"+picId+"' to '"+newId+"'");
+                        picIdNode.setTextContent(newId);
+                    }
                 }
             }
         }
